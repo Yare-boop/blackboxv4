@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BLACKBOX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash" class="splash">
+  <div class="splash-inner">
+    <div class="splash-sigil">☽⬛☾</div>
+    <h1 class="splash-title">BLACKBOX</h1>
+    <p class="splash-sub">escucha con intención · música libre · mente abierta</p>
+    <div class="splash-creatures">
+      <span class="creature rat">🐀</span>
+      <span class="creature unicorn">🦄</span>
+      <span class="creature dragon">🐉</span>
+    </div>
+    <button class="enter-btn" onclick="enterApp()">⬛ entrar</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="app hidden">
+
+  <!-- SIDEBAR NAV -->
+  <nav class="sidebar">
+    <div class="logo">⬛</div>
+    <ul class="nav-icons">
+      <li class="nav-item active" data-section="player" onclick="showSection('player')" title="Reproductor">♫</li>
+      <li class="nav-item" data-section="library" onclick="showSection('library')" title="Biblioteca">☰</li>
+      <li class="nav-item" data-section="artists" onclick="showSection('artists')" title="Artistas">♛</li>
+      <li class="nav-item" data-section="download" onclick="showSection('download')" title="Descargar">⬇</li>
+      <li class="nav-item" data-section="notes" onclick="showSection('notes')" title="Notas">✦</li>
+      <li class="nav-item" data-section="games" onclick="showSection('games')" title="Juegos">⎔</li>
+    </ul>
+    <div class="sidebar-creatures">
+      <span class="side-creature" title="rata guardiana">🐀</span>
+    </div>
+  </nav>
+
+  <!-- CONTENT AREA -->
+  <main class="content">
+
+    <!-- ===== PLAYER SECTION ===== -->
+    <section id="section-player" class="section active">
+      <div class="player-layout">
+
+        <!-- Album Art -->
+        <div class="album-art-container">
+          <div class="album-art" id="albumArt">
+            <div class="art-sigil">
+              <span class="art-dragon">🐉</span>
+              <div class="art-rings">
+                <div class="ring r1"></div>
+                <div class="ring r2"></div>
+                <div class="ring r3"></div>
+              </div>
+            </div>
+          </div>
+          <div class="vinyl-effect" id="vinyl"></div>
+        </div>
+
+        <!-- Track Info -->
+        <div class="track-info">
+          <h2 class="track-title" id="trackTitle">sin canción</h2>
+          <p class="track-artist" id="trackArtist">— selecciona una canción —</p>
+          <p class="track-album" id="trackAlbum"></p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+          <span class="time-current" id="timeCurrent">0:00</span>
+          <div class="progress-bar" id="progressBar" onclick="seekTrack(event)">
+            <div class="progress-fill" id="progressFill"></div>
+            <div class="progress-thumb" id="progressThumb"></div>
+          </div>
+          <span class="time-total" id="timeTotal">0:00</span>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button class="ctrl-btn" id="btnShuffle" onclick="toggleShuffle()" title="Aleatorio">⇌</button>
+          <button class="ctrl-btn" onclick="prevTrack()" title="Anterior">⏮</button>
+          <button class="ctrl-btn play-btn" id="btnPlay" onclick="togglePlay()" title="Play/Pause">▶</button>
+          <button class="ctrl-btn" onclick="nextTrack()" title="Siguiente">⏭</button>
+          <button class="ctrl-btn" id="btnRepeat" onclick="toggleRepeat()" title="Repetir">↻</button>
+        </div>
+
+        <!-- Volume -->
+        <div class="volume-row">
+          <span class="vol-icon">♪</span>
+          <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="80" oninput="setVolume(this.value)">
+          <span class="vol-icon">♫</span>
+        </div>
+
+        <!-- Mini Queue -->
+        <div class="mini-queue">
+          <p class="queue-label">▸ en cola</p>
+          <div id="miniQueueList" class="mini-queue-list"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== LIBRARY SECTION ===== -->
+    <section id="section-library" class="section">
+      <div class="section-header">
+        <h2 class="section-title">✦ biblioteca</h2>
+        <div class="header-actions">
+          <input type="file" id="fileInput" accept="audio/*" multiple onchange="loadLocalFiles(event)" style="display:none">
+          <button class="action-btn" onclick="document.getElementById('fileInput').click()">+ cargar archivo</button>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-row">
+        <input type="text" class="search-input" placeholder="buscar canción, artista..." id="searchInput" oninput="filterLibrary()">
+      </div>
+
+      <!-- Sort -->
+      <div class="sort-row">
+        <span class="sort-label">ordenar:</span>
+        <button class="sort-btn active" onclick="sortLibrary('title', this)">título</button>
+        <button class="sort-btn" onclick="sortLibrary('artist', this)">artista</button>
+        <button class="sort-btn" onclick="sortLibrary('album', this)">álbum</button>
+        <button class="sort-btn" onclick="sortLibrary('added', this)">reciente</button>
+      </div>
+
+      <!-- Track List -->
+      <div class="track-list" id="trackList">
+        <div class="empty-state">
+          <span class="empty-creature">🦄</span>
+          <p>el unicornio espera tu música</p>
+          <p class="empty-sub">descarga desde YouTube o carga archivos locales</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ARTISTS SECTION ===== -->
+    <section id="section-artists" class="section">
+      <div class="section-header">
+        <h2 class="section-title">♛ artistas & álbumes</h2>
+      </div>
+      <div class="view-toggle">
+        <button class="toggle-btn active" onclick="setArtistView('artists', this)">por artista</button>
+        <button class="toggle-btn" onclick="setArtistView('albums', this)">por álbum</button>
+      </div>
+      <div id="artistsGrid" class="artists-grid"></div>
+    </section>
+
+    <!-- ===== DOWNLOAD SECTION ===== -->
+    <section id="section-download" class="section">
+      <div class="section-header">
+        <h2 class="section-title">⬇ descargar música</h2>
+      </div>
+
+      <div class="download-card">
+        <div class="download-sigil">🐉</div>
+        <p class="download-desc">pega un enlace de YouTube — canción o playlist</p>
+        <div class="url-row">
+          <input type="text" class="url-input" id="ytUrl" placeholder="https://youtube.com/watch?v=...">
+        </div>
+        <div class="format-row">
+          <label class="format-label">formato:</label>
+          <select class="format-select" id="formatSelect">
+            <option value="mp3">MP3 (128kbps)</option>
+            <option value="mp3-high">MP3 (320kbps)</option>
+            <option value="m4a">M4A</option>
+            <option value="opus">OPUS</option>
+          </select>
+        </div>
+        <button class="download-btn" onclick="startDownload()">⬛ descargar</button>
+        <div id="downloadStatus" class="download-status hidden"></div>
+        <div id="downloadQueue" class="download-queue"></div>
+      </div>
+
+      <!-- Backend config -->
+      <div class="backend-card">
+        <h3 class="backend-title">⚙ configurar backend</h3>
+        <p class="backend-desc">para descargar música necesitas el servidor Flask corriendo en Termux</p>
+        <div class="url-row">
+          <input type="text" class="url-input" id="backendUrl" value="http://127.0.0.1:5000" placeholder="http://127.0.0.1:5000">
+        </div>
+        <button class="action-btn" onclick="testBackend()">probar conexión</button>
+        <div id="backendStatus" class="backend-status"></div>
+        <div class="termux-guide">
+          <p class="guide-title">▸ iniciar en Termux:</p>
+          <code class="guide-code">pip install flask yt-dlp mutagen
+python server.py</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== NOTES SECTION ===== -->
+    <section id="section-notes" class="section">
+      <div class="section-header">
+        <h2 class="section-title">✦ notas & sentimientos</h2>
+      </div>
+      <div class="notes-current">
+        <p class="notes-playing">escuchando: <span id="notesTrackName">— nada —</span></p>
+        <textarea class="notes-textarea" id="noteInput" placeholder="¿qué sientes? ¿qué piensas?&#10;escribe aquí tu nota para esta canción..."></textarea>
+        <button class="action-btn" onclick="saveNote()">✦ guardar nota</button>
+      </div>
+      <div class="notes-list" id="notesList">
+        <p class="notes-empty">tus notas aparecerán aquí</p>
+      </div>
+    </section>
+
+    <!-- ===== GAMES SECTION ===== -->
+    <section id="section-games" class="section">
+      <div class="section-header">
+        <h2 class="section-title">⎔ arcadia</h2>
+        <p class="section-sub">la música sigue sonando 🐀</p>
+      </div>
+      <div class="games-grid">
+        <div class="game-card" onclick="launchGame('pacman')">
+          <div class="game-icon">◉</div>
+          <h3 class="game-name">PAC·RAT</h3>
+          <p class="game-desc">la rata come almas en el laberinto</p>
+          <button class="game-btn">jugar</button>
+        </div>
+        <div class="game-card" onclick="launchGame('space')">
+          <div class="game-icon">✦</div>
+          <h3 class="game-name">VOID DRAGON</h3>
+          <p class="game-desc">dragón vs el vacío infinito</p>
+          <button class="game-btn">jugar</button>
+        </div>
+        <div class="game-card" onclick="launchGame('pixel')">
+          <div class="game-icon">⬛</div>
+          <h3 class="game-name">PIXEL ALTAR</h3>
+          <p class="game-desc">crea arte mientras escuchas</p>
+          <button class="game-btn">abrir</button>
+        </div>
+      </div>
+      <!-- Game Canvas -->
+      <div id="gameContainer" class="game-container hidden">
+        <div class="game-header">
+          <span id="gameTitle" class="game-title-bar"></span>
+          <span id="gameScore" class="game-score">0</span>
+          <button class="close-game-btn" onclick="closeGame()">✕</button>
+        </div>
+        <canvas id="gameCanvas" class="game-canvas"></canvas>
+        <div id="pixelArtContainer" class="pixel-art-container hidden"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM PLAYER BAR -->
+  <div class="bottom-bar" id="bottomBar">
+    <div class="bottom-art" id="bottomArt">🐉</div>
+    <div class="bottom-info">
+      <span class="bottom-title" id="bottomTitle">blackbox</span>
+      <span class="bottom-artist" id="bottomArtist">selecciona una canción</span>
+    </div>
+    <div class="bottom-controls">
+      <button class="bottom-btn" onclick="prevTrack()">⏮</button>
+      <button class="bottom-btn bottom-play" id="bottomPlay" onclick="togglePlay()">▶</button>
+      <button class="bottom-btn" onclick="nextTrack()">⏭</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- DUPLICATE DIALOG -->
+<div id="dupDialog" class="dialog hidden">
+  <div class="dialog-box">
+    <div class="dialog-icon">🐀</div>
+    <h3 class="dialog-title">canción duplicada</h3>
+    <p class="dialog-msg" id="dupMsg"></p>
+    <div class="dialog-btns">
+      <button class="dialog-btn cancel" onclick="closeDupDialog()">ignorar</button>
+      <button class="dialog-btn confirm" onclick="addDuplicate()">agregar igual</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="js/db.js"></script>
+<script src="js/player.js"></script>
+<script src="js/library.js"></script>
+<script src="js/download.js"></script>
+<script src="js/games.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
