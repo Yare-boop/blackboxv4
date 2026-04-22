@@ -4,10 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>BLACKBOX</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* Fallback inmediato — aplica ANTES que Google Fonts cargue */
+:root {
+  --font-display: 'UnifrakturMaguntia', 'Palatino Linotype', Georgia, serif;
+  --font-body: 'Crimson Text', Georgia, 'Times New Roman', serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+}
+html, body {
+  background: #0a0a0a !important;
+  color: #f0ece4 !important;
+}
+</style>
 </head>
 <body>
 
@@ -33,12 +43,12 @@
   <nav class="sidebar">
     <div class="logo">⬛</div>
     <ul class="nav-icons">
-      <li class="nav-item active" data-section="player" onclick="showSection('player')" title="Reproductor">♫</li>
-      <li class="nav-item" data-section="library" onclick="showSection('library')" title="Biblioteca">☰</li>
-      <li class="nav-item" data-section="artists" onclick="showSection('artists')" title="Artistas">♛</li>
-      <li class="nav-item" data-section="download" onclick="showSection('download')" title="Descargar">⬇</li>
-      <li class="nav-item" data-section="notes" onclick="showSection('notes')" title="Notas">✦</li>
-      <li class="nav-item" data-section="games" onclick="showSection('games')" title="Juegos">⎔</li>
+      <li class="nav-item active" data-section="player" onclick="showSection('player')" title="Reproductor">🎵</li>
+      <li class="nav-item" data-section="library" onclick="showSection('library')" title="Biblioteca">📋</li>
+      <li class="nav-item" data-section="artists" onclick="showSection('artists')" title="Artistas">🎤</li>
+      <li class="nav-item" data-section="download" onclick="showSection('download')" title="Descargar">⬇️</li>
+      <li class="nav-item" data-section="notes" onclick="showSection('notes')" title="Notas">📝</li>
+      <li class="nav-item" data-section="games" onclick="showSection('games')" title="Juegos">🎮</li>
     </ul>
     <div class="sidebar-creatures">
       <span class="side-creature" title="rata guardiana">🐀</span>
